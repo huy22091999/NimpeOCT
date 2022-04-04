@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_HomeFragment">
+
+    <fragment
+        android:id="@+id/nav_HomeFragment"
+        android:name="com.globits.nimpe.ui.home.HomeFragment"
+        android:label="@string/fragment_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_FirstFragment_to_newsFragment"
+            app:destination="@id/nav_newsFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_feedbackFragment"
+            app:destination="@id/nav_feedbackFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_medicalFragment"
+            app:destination="@id/nav_medicalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_newsFragment"
+        android:name="com.globits.nimpe.ui.news.NewsFragment"
+        android:label="@string/fragment_news"
+        tools:layout="@layout/fragment_news" />
+    <fragment
+        android:id="@+id/nav_feedbackFragment"
+        android:name="com.globits.nimpe.ui.feedback.FeedbackFragment"
+        android:label="fragment_feedback"
+        tools:layout="@layout/fragment_feedback" />
+    <fragment
+        android:id="@+id/nav_medicalFragment"
+        android:name="com.globits.nimpe.ui.medical.MedicalFragment"
+        android:label="fragment_medical"
+        tools:layout="@layout/fragment_medical" />
+
+</navigation>

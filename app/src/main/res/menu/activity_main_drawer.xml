@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_HomeFragment"
+            android:title="@string/menu_home"/>
+        <item android:id="@+id/nav_newsFragment"
+            android:title="@string/menu_category"/>
+        <item android:id="@+id/nav_medicalFragment"
+            android:title="@string/menu_nearest_medical"/>
+        <item android:id="@+id/nav_feedbackFragment"
+            android:title="@string/menu_feedback"/>
+    </group>
+    <group >
+        <item
+            android:id="@+id/nav_change_langue"
+            android:title="Language"
+            android:checkable="false"
+            android:enabled="false"
+            android:contentDescription="English"
+            app:actionViewClass="android.widget.Switch">
+
+        </item>
+    </group>
+</menu>
