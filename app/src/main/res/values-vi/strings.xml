@@ -22,4 +22,13 @@
     <string name="feedback_hint">Ý kiến phản hồi của bạn ...</string>
     <string name="send_feedback">Gửi phản hồi</string>
     <string name="warning">Cảnh báo bệnh truyền nhiễm</string>
+    <string name="loggin">Đăng nhập</string>
+    <string name="lable_signing">Chưa có tài khoản /<font color="#3F51B5"><b> Đăng kí</b></font></string>
+    <string name="forget_password">Quên mật khẩu</string>
+    <string name="category_theme">Chủ đề tin tức</string>
+    <string name="home_everyone">Mọi người cùng chung tay phòng chống dịch bệnh sốt xuất huyết</string>
+    <string name="home_button">Tin tức sốt xuất huyết</string>
+    <string name="note">Dengue Alert không thực hiện lưu trữ, thu thập dữ liệu vị tí của dười dùng.</string>
+    <string name="accept_use">Đồng ý sử dụng</string>
+    <string name="title_category">Bệnh sốt xuất huyết</string>
 </resources>

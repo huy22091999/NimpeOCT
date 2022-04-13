@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 
 interface UserApi {
-    @GET("/")
-    fun getUser(): Observable<List<User>>
+    @GET("api/users/getCurrentUser")
+    fun getCurrentUser(): Observable<User>
 
 }

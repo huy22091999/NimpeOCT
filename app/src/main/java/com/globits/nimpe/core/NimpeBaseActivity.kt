@@ -56,7 +56,7 @@ abstract class NimpeBaseActivity<VB: ViewBinding> : AppCompatActivity(), HasScre
     protected val viewModelProvider
         get() = ViewModelProvider(this, viewModelFactory)
 
-    protected fun <T : NimpeViewEvents> NimpeViewModel<*, *, T>.observeViewEvents(observer: (T) -> Unit) {
+    protected fun <T : NimpeViewEvents> NimpeViewModel<*, *, T>.observeViewEvents(observer: (T?) -> Unit) {
         viewEvents
                 .observe()
                 .observeOn(AndroidSchedulers.mainThread())

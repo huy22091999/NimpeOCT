@@ -1,27 +1,44 @@
 package com.globits.nimpe.ui.security
 import androidx.lifecycle.viewModelScope
-import com.airbnb.mvrx.Loading
+import com.airbnb.mvrx.*
 import com.globits.nimpe.core.NimpeViewModel
 import com.globits.nimpe.data.model.TokenResponse
 import com.globits.nimpe.data.repository.AuthRepository
+import com.globits.nimpe.data.repository.UserRepository
+import com.globits.nimpe.ui.home.HomeViewState
+import com.globits.nimpe.ui.home.HomeViewmodel
 import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.async
 
 
 class SecurityViewModel @AssistedInject constructor(
     @Assisted state: SecurityViewState,
-    val repository: AuthRepository
+    val repository: AuthRepository,
+    val userRepo:UserRepository
 ) :
     NimpeViewModel<SecurityViewState,SecurityViewAction,SecurityViewEvent>(state) {
+    init {
+
+    }
 
     override fun handle(action: SecurityViewAction) {
         when(action){
             is SecurityViewAction.LogginAction->handleLogin(action.userName,action.password)
-            is SecurityViewAction.LogginAction->handleLogin(action.userName,action.password)
+            is SecurityViewAction.SaveTokenAction->handleSaveToken(action.token)
+            is SecurityViewAction.GetUserCurrent ->handleCurrentUser()
         }
     }
-    fun handleLogin(userName:String,password: String){
+
+    private fun handleCurrentUser() {
+        setState { copy(userCurrent=Loading()) }
+        userRepo.getCurrentUser().execute {
+            copy(userCurrent=it)
+        }
+    }
+
+    private fun handleLogin(userName:String,password: String){
         setState {
             copy(asyncLogin=Loading())
         }
@@ -30,7 +47,7 @@ class SecurityViewModel @AssistedInject constructor(
 
         }
     }
-    fun handleSaveToken(tokenResponse: TokenResponse)
+    private fun handleSaveToken(tokenResponse: TokenResponse)
     {
         this.viewModelScope.async {
             repository.saveAccessTokens(tokenResponse)
@@ -38,4 +55,28 @@ class SecurityViewModel @AssistedInject constructor(
 
     }
 
+    fun handleReturnSignin() {
+        _viewEvents.post(SecurityViewEvent.ReturnSigninEvent)
+    }
+    fun handleReturnResetPass() {
+        _viewEvents.post(SecurityViewEvent.ReturnResetpassEvent)
+    }
+
+    fun getString()="test"
+    @AssistedFactory
+    interface Factory {
+        fun create(initialState: SecurityViewState): SecurityViewModel
+    }
+
+    companion object : MvRxViewModelFactory<SecurityViewModel, SecurityViewState> {
+        @JvmStatic
+        override fun create(viewModelContext: ViewModelContext, state: SecurityViewState): SecurityViewModel {
+            val factory = when (viewModelContext) {
+                is FragmentViewModelContext -> viewModelContext.fragment as? Factory
+                is ActivityViewModelContext -> viewModelContext.activity as? Factory
+            }
+
+            return factory?.create(state) ?: error("You should let your activity/fragment implements Factory interface")
+        }
+    }
 }

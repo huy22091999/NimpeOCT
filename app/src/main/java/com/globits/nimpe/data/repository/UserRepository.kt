@@ -11,6 +11,6 @@ import javax.inject.Singleton
 class UserRepository @Inject constructor(
     val api: UserApi
 ) {
-    fun getUser(): Observable<List<User>> = api.getUser().subscribeOn(Schedulers.io())
+    fun getCurrentUser(): Observable<User> = api.getCurrentUser().subscribeOn(Schedulers.io())
     fun getString(): String = "test part"
 }

@@ -13,7 +13,8 @@ class TokenAuthenticator(
 
     override fun authenticate(route: Route?, response: Response): Request {
         return response.request.newBuilder()
-            .header("Authorization", "Bearer $mAccessToken")
+            .header("Authorization", if (!mAccessToken.isNullOrEmpty())"Bearer $mAccessToken" else "Basic Y29yZV9jbGllbnQ6c2VjcmV0")
             .build()
     }
+
 }

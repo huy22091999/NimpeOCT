@@ -80,7 +80,7 @@ class UserPreferences @Inject constructor(context: Context) {
         private val USERNAME = stringPreferencesKey("key_user_name")
         private val USER_FULLNAME = stringPreferencesKey("key_user_fullname")
         private val USER_EMAIL = stringPreferencesKey("key_user_email")
-        const val APP_PREFERENCES = "vitimes_data_store"
+        const val APP_PREFERENCES = "nimpe_data_store"
     }
 
 }

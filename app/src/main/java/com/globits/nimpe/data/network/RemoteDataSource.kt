@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.globits.nimpe.BuildConfig
+import com.globits.nimpe.ui.security.UserPreferences
 import com.globits.nimpe.utils.format
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
@@ -38,8 +39,17 @@ class RemoteDataSource() {
         private const val DEFAULT_USER_AGENT = "Nimpe-Android"
         private const val DEFAULT_CONTENT_TYPE = "application/json"
     }
+    fun buildTokenApi(): AuthApi {
+        val gson = GsonBuilder().setLenient().create()
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(getRetrofitClient())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+            .create(AuthApi::class.java)
 
-    fun <Api> buildApi(
+    }
+        fun <Api> buildApi(
         api: Class<Api>,
         context: Context
     ): Api {
@@ -54,7 +64,7 @@ class RemoteDataSource() {
 
         if (sessionManager.fetchAuthToken() != null) {
             authenticator = TokenAuthenticator(sessionManager.fetchAuthToken()!!)
-        }
+        }else authenticator = TokenAuthenticator("")
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)

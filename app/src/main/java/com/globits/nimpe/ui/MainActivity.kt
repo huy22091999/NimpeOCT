@@ -1,6 +1,9 @@
 package com.globits.nimpe.ui
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -9,29 +12,31 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
+import android.widget.Switch
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.ActionBar.DISPLAY_HOME_AS_UP
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.airbnb.mvrx.viewModel
 import com.globits.nimpe.NimpeApplication
 import com.globits.nimpe.R
 import com.globits.nimpe.core.NimpeBaseActivity
 import com.globits.nimpe.databinding.ActivityMainBinding
-import com.globits.nimpe.ui.home.HomeFragment
 import com.globits.nimpe.ui.home.HomeViewState
 import com.globits.nimpe.ui.home.HomeViewmodel
-import com.globits.nimpe.ui.news.NewsFragment
+import com.globits.nimpe.ui.home.request_location.NotificationWorker
 import com.google.android.material.navigation.NavigationView
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -54,11 +59,42 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
         setContentView(views.root)
         setupToolbar()
         setupDrawer()
-        /*  supportFragmentManager.commit {
-              add<NewsFragment>(R.id.nav_host_fragment_content_main)
-          }*/
-//        print(homeViewModel.getUser().size.toString())
-//        print(homeViewModel.getString())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel()
+        }
+        val request: WorkRequest =
+            PeriodicWorkRequest.Builder(
+                NotificationWorker::class.java,
+                10000,
+                TimeUnit.MILLISECONDS
+            )
+                .build()
+        WorkManager.getInstance().enqueue(request)
+        homeViewModel.subscribe(this){
+            if(it.isLoadding())
+            {
+                views.appBarMain.contentMain.waitingView.visibility=View.VISIBLE
+            }else
+                views.appBarMain.contentMain.waitingView.visibility=View.GONE
+        }
+
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        val name = getString(R.string.app_name)
+        val descriptionText = getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(55.toString(), name, importance).apply {
+            description = descriptionText
+        }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
     override fun create(initialState: HomeViewState): HomeViewmodel {
@@ -72,10 +108,6 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
     private fun setupToolbar() {
         toolbar = views.toolbar
         setSupportActionBar(toolbar)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu_togglr_drawer)
-        supportActionBar?.setHomeButtonEnabled(true)
-
-
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
@@ -91,18 +123,13 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
                 R.id.nav_HomeFragment,
                 R.id.nav_newsFragment,
                 R.id.nav_medicalFragment,
-                R.id.nav_feedbackFragment
-
+                R.id.nav_feedbackFragment,
+                R.id.listNewsFragment,
+                R.id.detailNewsFragment
             ), drawerLayout
         )
-//        var mDrawerToggle = ActionBarDrawerToggle(
-//            this, drawerLayout,
-//            R.drawable.ic_menu_togglr_drawer, //nav menu toggle icon
-//            R.drawable.ic_menu_togglr_drawer
-//        )
-//        drawerLayout.setDrawerListener(mDrawerToggle)
 
-        setupActionBarWithNavController(navController,appBarConfiguration)
+        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         // settings
@@ -110,24 +137,46 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
 
             val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
 
-            // if (!handled) {
+            //   if (!handled) {
             when (menuItem.itemId) {
                 R.id.nav_change_langue -> {
-                    val myLocale = Locale("en")
-                    val res: Resources = resources
-                    val dm: DisplayMetrics = res.displayMetrics
-                    val conf: Configuration = res.configuration
-                    conf.setLocale(myLocale)
-                    res.updateConfiguration(conf, dm)
-                    val refresh = Intent(this, MainActivity::class.java)
-                    finish()
-                    startActivity(refresh)
+
+                }
+                else -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    handled
                 }
             }
-            // }
-
-            drawerLayout.closeDrawer(GravityCompat.START)
+            //}
             handled
+
+        }
+        val menu: Menu = navView.menu
+        val menuItem = menu.findItem(R.id.nav_change_langue)
+        val actionView: View = MenuItemCompat.getActionView(menuItem)
+
+        val res: Resources = resources
+        val dm: DisplayMetrics = res.displayMetrics
+        val conf: Configuration = res.configuration
+
+        var switcher = actionView as Switch
+        var local = conf.locale
+        print(local.toLanguageTag())
+
+        switcher.isChecked = local.toLanguageTag() == "vi-VN"
+
+        switcher.setOnCheckedChangeListener { _, isChecked ->
+            var languageToLoad = "" // your language
+            if (isChecked) {
+                languageToLoad = "vi"
+            } else {
+                languageToLoad = "en"
+            }
+            val myLocale = Locale(languageToLoad)
+
+            conf.setLocale(myLocale)
+            res.updateConfiguration(conf, dm)
+            startActivity(Intent(baseContext, MainActivity::class.java))
         }
     }
 
@@ -149,11 +198,9 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                if(drawerLayout.isOpen)
-                {
+                if (drawerLayout.isOpen) {
                     drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                else{
+                } else {
                     drawerLayout.openDrawer(GravityCompat.START)
                 }
                 return true
@@ -164,5 +211,6 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
         }
         return super.onOptionsItemSelected(item)
     }
+
 }
 

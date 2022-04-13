@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<com.globits.nimpe.utils.ExposedDropdownMenu xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+<Switch xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:id="@+id/switch_change_language"
     android:layout_height="wrap_content"
-    android:hint="language" />
+     />
 
 
     <!--<?xml version="1.0" encoding="utf-8"?>-->

@@ -15,14 +15,15 @@
             android:title="@string/menu_feedback"/>
     </group>
     <group >
+
         <item
             android:id="@+id/nav_change_langue"
             android:title="Language"
-            android:checkable="false"
-            android:enabled="false"
-            android:contentDescription="English"
-            app:actionViewClass="android.widget.Switch">
-
+            app:showAsAction="always"
+            android:checkable="true"
+            app:actionViewClass="android.widget.Switch"
+            android:actionLayout="@layout/layout_menu_change_language"
+            >
         </item>
     </group>
 </menu>
