@@ -23,6 +23,7 @@ import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import java.util.*
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
@@ -39,17 +40,20 @@ class RemoteDataSource() {
         private const val DEFAULT_USER_AGENT = "Nimpe-Android"
         private const val DEFAULT_CONTENT_TYPE = "application/json"
     }
-    fun buildTokenApi(): AuthApi {
+
+    fun buildApi():ReDengueLocationApi {
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .callbackExecutor(Executors.newSingleThreadExecutor())
             .client(getRetrofitClient())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(AuthApi::class.java)
+            .create(ReDengueLocationApi::class.java)
 
     }
-        fun <Api> buildApi(
+
+    fun <Api> buildApi(
         api: Class<Api>,
         context: Context
     ): Api {
@@ -58,13 +62,15 @@ class RemoteDataSource() {
             .setLenient()
             .create()
 
-        val sessionManager = SessionManager(context.applicationContext)
-        Timber.e("Access token = ${sessionManager.fetchAuthToken()}")
-        var authenticator: TokenAuthenticator? = null
+//        val sessionManager = SessionManager(context.applicationContext)
+//        Timber.e("Access token = ${sessionManager.fetchAuthToken()}")
+        var authenticator: TokenAuthenticator? =null
+        //TokenAuthenticator(context,buildTokenApi())
 
-        if (sessionManager.fetchAuthToken() != null) {
-            authenticator = TokenAuthenticator(sessionManager.fetchAuthToken()!!)
-        }else authenticator = TokenAuthenticator("")
+//        if (sessionManager.fetchAuthToken() != null) {
+//            authenticator = TokenAuthenticator(sessionManager.fetchAuthToken()!!)
+//        } else
+        authenticator = TokenAuthenticator("")
 
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -81,7 +87,7 @@ class RemoteDataSource() {
 
         return getUnsafeOkHttpClient()
             .writeTimeout(31, TimeUnit.SECONDS)
-            .readTimeout(31 , TimeUnit.SECONDS)
+            .readTimeout(31, TimeUnit.SECONDS)
             .connectTimeout(31, TimeUnit.SECONDS)
             .cookieJar(cookieJar())
             .addNetworkInterceptor(customInterceptor())
@@ -144,18 +150,23 @@ class RemoteDataSource() {
                 }
             } else null
     }
+
     private fun getUnsafeOkHttpClient(): OkHttpClient.Builder =
         try {
             // Create a trust manager that does not validate certificate chains
             val trustAllCerts: Array<TrustManager> = arrayOf(
                 object : X509TrustManager {
                     @Throws(CertificateException::class)
-                    override fun checkClientTrusted(chain: Array<X509Certificate?>?,
-                                                    authType: String?) = Unit
+                    override fun checkClientTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) = Unit
 
                     @Throws(CertificateException::class)
-                    override fun checkServerTrusted(chain: Array<X509Certificate?>?,
-                                                    authType: String?) = Unit
+                    override fun checkServerTrusted(
+                        chain: Array<X509Certificate?>?,
+                        authType: String?
+                    ) = Unit
 
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                 }
@@ -166,8 +177,10 @@ class RemoteDataSource() {
             // Create an ssl socket factory with our all-trusting manager
             val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
             val builder = OkHttpClient.Builder()
-            builder.sslSocketFactory(sslSocketFactory,
-                trustAllCerts[0] as X509TrustManager)
+            builder.sslSocketFactory(
+                sslSocketFactory,
+                trustAllCerts[0] as X509TrustManager
+            )
             builder.hostnameVerifier { _, _ -> true }
             builder
         } catch (e: Exception) {

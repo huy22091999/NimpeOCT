@@ -1,22 +1,34 @@
 package com.globits.nimpe.ui.security
 
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
-import androidx.activity.viewModels
-import com.airbnb.mvrx.Fail
-import com.airbnb.mvrx.Success
+import android.util.Base64
 import com.airbnb.mvrx.viewModel
 import com.globits.nimpe.NimpeApplication
 import com.globits.nimpe.core.NimpeBaseActivity
-import com.globits.nimpe.data.network.SessionManager
+import com.globits.nimpe.data.model.Patient
+import com.globits.nimpe.data.model.Vector
+import com.globits.nimpe.data.network.RemoteDataSource
 import com.globits.nimpe.databinding.ActivitySplashBinding
-import com.globits.nimpe.ui.MainActivity
+import com.google.gson.Gson
+import okhttp3.ResponseBody
+import org.json.JSONArray
+import org.json.JSONObject
+import org.json.JSONTokener
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.nio.charset.Charset
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
-class SplashActivity : NimpeBaseActivity<ActivitySplashBinding>(),SecurityViewModel.Factory {
+
+class SplashActivity : NimpeBaseActivity<ActivitySplashBinding>(), SecurityViewModel.Factory {
 
     val viewmodel: SecurityViewModel by viewModel()
-
     @Inject
     lateinit var securityviewmodelFactory: SecurityViewModel.Factory
 
@@ -25,27 +37,13 @@ class SplashActivity : NimpeBaseActivity<ActivitySplashBinding>(),SecurityViewMo
         super.onCreate(savedInstanceState)
         setContentView(views.root)
     }
-
     override fun onResume() {
         super.onResume()
-        viewmodel.handle(SecurityViewAction.GetUserCurrent)
-        viewmodel.subscribe(this){
-            when(it.userCurrent)
-            {
-                is Success ->{
-                    startActivity(Intent(this,MainActivity::class.java))
-                }
-                is Fail->
-                {
-                    val sessionManager =SessionManager(applicationContext)
-                    sessionManager.saveAuthToken("")
-                    startActivity(Intent(this,LoginActivity::class.java))
-                }
-            }
-        }
+        Thread.sleep(1000)
+        startActivity(Intent(this,AcceptActivity::class.java))
+        finish()
+
     }
-
-
     override fun getBinding(): ActivitySplashBinding {
         return ActivitySplashBinding.inflate(layoutInflater)
     }
@@ -53,6 +51,4 @@ class SplashActivity : NimpeBaseActivity<ActivitySplashBinding>(),SecurityViewMo
     override fun create(initialState: SecurityViewState): SecurityViewModel {
         return securityviewmodelFactory.create(initialState)
     }
-
-
 }

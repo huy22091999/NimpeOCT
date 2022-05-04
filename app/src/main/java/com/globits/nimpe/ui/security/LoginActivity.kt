@@ -11,6 +11,7 @@ import com.globits.nimpe.R
 import com.globits.nimpe.core.NimpeBaseActivity
 import com.globits.nimpe.databinding.ActivityLoginBinding
 import com.globits.nimpe.ui.home.HomeViewmodel
+import com.globits.nimpe.utils.addFragmentToBackstack
 import javax.inject.Inject
 
 class LoginActivity : NimpeBaseActivity<ActivityLoginBinding>(), SecurityViewModel.Factory {
@@ -37,14 +38,16 @@ class LoginActivity : NimpeBaseActivity<ActivityLoginBinding>(), SecurityViewMod
     private fun handleEvent(event: SecurityViewEvent) {
         when(event){
             is SecurityViewEvent.ReturnSigninEvent ->{
-                supportFragmentManager.commit {
-                    replace<SigninFragment>(R.id.frame_layout)
-                }
+                addFragmentToBackstack(R.id.frame_layout,SigninFragment::class.java)
+//                supportFragmentManager.commit {
+//                    replace<SigninFragment>(R.id.frame_layout)
+//                }
             }
             is SecurityViewEvent.ReturnResetpassEvent->{
-                supportFragmentManager.commit {
-                    replace<ResetPasswordFragment>(R.id.frame_layout)
-                }
+                addFragmentToBackstack(R.id.frame_layout,ResetPasswordFragment::class.java)
+//                supportFragmentManager.commit {
+//                    replace<ResetPasswordFragment>(R.id.frame_layout)
+//                }
             }
 
         }

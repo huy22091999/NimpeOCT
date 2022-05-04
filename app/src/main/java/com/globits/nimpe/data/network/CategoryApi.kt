@@ -5,13 +5,16 @@ import io.reactivex.Observable
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import javax.inject.Singleton
 
 
 interface CategoryApi {
-    @POST("api/nimpe-category/searchByPage")
+    @GET("api/{id}")
+    fun getNews(@Path("id")id:String): Observable<News>
+    @POST("public/app/searchByPage")
     fun getCategory(@Body filter: CategoryFilter): Observable<Page<Category>>
-    @POST("api/nimpe-article/searchByDto")
+    @POST("public/app/searchByDto")
     suspend fun getNews(@Body filter: NewsFilter): Page<News>
 
 }

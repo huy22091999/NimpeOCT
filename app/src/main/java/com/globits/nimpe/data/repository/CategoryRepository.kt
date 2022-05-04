@@ -18,7 +18,8 @@ import javax.inject.Singleton
 class CategoryRepository @Inject constructor(
     val api: CategoryApi
 ) {
-    fun getCategory(): Observable<Page<Category>> = api.getCategory(CategoryFilter(1,1,100)).subscribeOn(Schedulers.io())
+    fun getNews(id:String):Observable<News> = api.getNews(id).subscribeOn(Schedulers.io())
+    fun getCategory(language: Int): Observable<Page<Category>> = api.getCategory(CategoryFilter(language,1,100)).subscribeOn(Schedulers.io())
     fun getNews(language:Int,category: Category): Flow<PagingData<News>> {
         return Pager(
             PagingConfig(

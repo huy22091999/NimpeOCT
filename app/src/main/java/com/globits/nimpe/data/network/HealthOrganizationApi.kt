@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 
 interface HealthOrganizationApi {
-    @POST("api/health-organization/search")
+    @POST("public/app/healthOrganization/searchByPage")
     suspend fun getHealthOrganization(@Body filter: HealthOrganizationFilter): Page<HealthOrganization>
 
 }

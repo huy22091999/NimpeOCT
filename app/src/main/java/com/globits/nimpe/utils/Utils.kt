@@ -1,6 +1,8 @@
 package com.globits.nimpe.utils
 
+import android.location.Location
 import android.os.Build
+import android.os.Parcelable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -9,7 +11,13 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
+fun Location?.toText(): String {
+    return if (this != null) {
+        "($latitude, $longitude)"
+    } else {
+        "Unknown location"
+    }
+}
 @RequiresApi(Build.VERSION_CODES.O)
 fun Date.format(format: String? = null): String {
     val ld = toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
@@ -28,5 +36,16 @@ inline fun androidx.fragment.app.FragmentManager.commitTransaction(allowStateLos
         transaction.commitAllowingStateLoss()
     } else {
         transaction.commit()
+    }
+}
+fun <T : Fragment> AppCompatActivity.addFragmentToBackstack(
+    frameId: Int,
+    fragmentClass: Class<T>,
+    tag: String? = null,
+    allowStateLoss: Boolean = false,
+    option: ((FragmentTransaction) -> Unit)? = null) {
+    supportFragmentManager.commitTransaction(allowStateLoss) {
+        option?.invoke(this)
+        replace(frameId, fragmentClass,null, tag).addToBackStack(tag)
     }
 }

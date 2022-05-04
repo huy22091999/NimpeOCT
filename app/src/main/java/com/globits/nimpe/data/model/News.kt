@@ -6,7 +6,7 @@ import java.util.*
 data class News(
     @SerializedName("categories")
     val categories: Category? = null,
-    @SerializedName("categories")
+    @SerializedName("content")
     val content: String? = null,
     @SerializedName("id")
     val id: String? = null,
@@ -31,9 +31,9 @@ data class News(
 )
 
 data class NewsFilter(
-    @SerializedName(" category")
+    @SerializedName("category")
     val category: Category? = null,
-    @SerializedName(" checkLanguage")
+    @SerializedName("checkLanguage")
     val checkLanguage: Int? = null,
     @SerializedName("pageIndex")
     val pageIndex: Int? = null,

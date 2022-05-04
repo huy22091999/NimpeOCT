@@ -22,7 +22,7 @@ class NewsPagingSource(
         return try {
 
             val nextPageNumber = params.key ?: INITIAL_PAGE
-            val filter = NewsFilter(category,language,nextPageNumber, 10)
+            val filter = NewsFilter(category,language,nextPageNumber, 10,null,3)
             val response = api.getNews(filter)
 
             LoadResult.Page(

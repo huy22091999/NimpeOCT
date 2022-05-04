@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/background_category_layout"
+    android:padding="12dp">
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:layout_gravity="center_vertical"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="32dp"
         android:src="@drawable/ic_ambulance"
-        android:tint="#F12F6D" />
+        android:tint="#F80754" />
     <LinearLayout
         android:layout_marginStart="16dp"
         android:layout_width="match_parent"

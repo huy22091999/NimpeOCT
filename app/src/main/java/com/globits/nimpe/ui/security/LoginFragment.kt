@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.airbnb.mvrx.Fail
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.activityViewModel
 import com.airbnb.mvrx.withState
+import com.globits.nimpe.R
 import com.globits.nimpe.core.NimpeBaseFragment
 import com.globits.nimpe.data.network.SessionManager
 import com.globits.nimpe.databinding.FragmentLoginBinding
@@ -38,9 +40,14 @@ class LoginFragment @Inject constructor() : NimpeBaseFragment<FragmentLoginBindi
     }
     fun loginSubmit()
     {
-        username=views.username.text.toString()
-        password=views.password.text.toString()
-        viewModel.handle(SecurityViewAction.LogginAction(username,password))
+        username=views.username.text.toString().trim()
+        password=views.password.text.toString().trim()
+        if(username.isNullOrEmpty()) views.usernameTil.error=getString(R.string.username_not_empty)
+        if(password.isNullOrEmpty()) views.passwordTil.error=getString(R.string.username_not_empty)
+        if (!username.isNullOrEmpty()&&!password.isNullOrEmpty())
+        {
+            viewModel.handle(SecurityViewAction.LogginAction(username,password))
+        }
     }
 
     override fun invalidate(): Unit = withState(viewModel){
@@ -49,13 +56,15 @@ class LoginFragment @Inject constructor() : NimpeBaseFragment<FragmentLoginBindi
                 it.asyncLogin.invoke()?.let { token->
                     val sessionManager = context?.let { it1 -> SessionManager(it1.applicationContext) }
                     token.accessToken?.let { it1 -> sessionManager!! .saveAuthToken(it1) }
+                    token.refreshToken?.let { it1 -> sessionManager!!.saveAuthTokenRefresh(it1) }
                     viewModel.handle(SecurityViewAction.SaveTokenAction(token!!))
                 }
+                Toast.makeText(requireContext(),getString(R.string.login_success),Toast.LENGTH_LONG).show()
                 startActivity(Intent(requireContext(),AcceptActivity::class.java))
                 activity?.finish()
             }
-            else->{
-
+            is Fail->{
+                views.passwordTil.error=getString(R.string.login_fail)
             }
         }
 

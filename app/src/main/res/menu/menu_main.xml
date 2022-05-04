@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.globits.nimpe.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+
+        android:icon="@drawable/img_flag_vi"
+        android:id="@+id/action_en"
+        app:showAsAction="collapseActionView"
+        android:title="en" />
+    <item
+        android:id="@+id/action_vi"
+        android:icon="@drawable/img_flag_vi"
+        app:showAsAction="collapseActionView"
+        android:title="vi"/>
 </menu>

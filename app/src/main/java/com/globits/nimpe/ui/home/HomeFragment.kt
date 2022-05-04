@@ -24,7 +24,19 @@ class HomeFragment @Inject constructor() : NimpeBaseFragment<FragmentHomeBinding
         views.homeToCategory.setOnClickListener {
             (activity as MainActivity).navigateTo(R.id.action_FirstFragment_to_newsFragment)
         }
+        viewModel.observeViewEvents {
+            handleEvent(it)
+        }
 
+    }
+    private fun handleEvent(it: HomeViewEvent) {
+        when(it)
+        {
+            is HomeViewEvent.ResetLanguege->{
+                views.title.text=getString(R.string.home_everyone)
+                views.homeToCategory.text=getString(R.string.home_button)
+            }
+        }
     }
 
 }

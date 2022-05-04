@@ -15,6 +15,7 @@
         android:background="@drawable/img_feedback"/>
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
+        android:id="@+id/title1"
         android:layout_marginTop="24dp"
         style="@style/TextAppearance.AppCompat"
         android:textSize="20sp"
@@ -26,6 +27,7 @@
         android:layout_marginTop="16dp"
         style="@style/TextAppearance.AppCompat"
         android:textSize="16sp"
+        android:id="@+id/title2"
         android:layout_gravity="center_horizontal"
         android:text="@string/feedback_description"
         android:layout_height="wrap_content"/>
@@ -36,8 +38,9 @@
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
         app:boxCornerRadiusTopStart="10dp"
-        app:boxStrokeColor="@color/purple_200"
+        app:boxStrokeColor="#E2D1F6"
         android:id="@+id/feedback_til"
+        app:hintEnabled="false"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_height="wrap_content">
         <com.google.android.material.textfield.TextInputEditText
@@ -53,6 +56,8 @@
         android:id="@+id/btn_send_feedback"
         android:layout_width="wrap_content"
         app:cornerRadius="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="@string/send_feedback"
         android:backgroundTint="@color/about_twitter_color"
         android:layout_height="wrap_content"/>

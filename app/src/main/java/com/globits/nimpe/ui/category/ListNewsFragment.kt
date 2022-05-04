@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.mvrx.activityViewModel
 import com.globits.nimpe.R
@@ -13,6 +14,8 @@ import com.globits.nimpe.core.NimpeBaseFragment
 import com.globits.nimpe.data.model.Category
 import com.globits.nimpe.databinding.FragmentDetailNewsBinding
 import com.globits.nimpe.databinding.FragmentListNewsBinding
+import com.globits.nimpe.ui.MainActivity
+import com.globits.nimpe.ui.home.HomeViewEvent
 import com.globits.nimpe.ui.home.HomeViewmodel
 import com.globits.nimpe.ui.medical.MedicalAdapter
 import com.globits.nimpe.ui.medical.MedicalLoadStateAdapter
@@ -22,16 +25,11 @@ import kotlinx.coroutines.flow.collectLatest
 class ListNewsFragment :NimpeBaseFragment<FragmentListNewsBinding>() {
     private lateinit var pagingAdapter: NewsAdapter
     private var category:Category? = null
-    val viewMode:HomeViewmodel by activityViewModel()
+    val viewModel:HomeViewmodel by activityViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            category_id = it.getString("category_id").toString()
-//        }
-        category=viewMode.getCategory()
-        viewMode.getNews(1, category!!)
-
+        category=viewModel.getCategory()
     }
 
     override fun getBinding(
@@ -43,7 +41,22 @@ class ListNewsFragment :NimpeBaseFragment<FragmentListNewsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pagingAdapter =NewsAdapter(requireContext())
+        viewModel.observeViewEvents {
+            handleEvent(it)
+        }
+
+        views.back.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        populateData()
+    }
+    fun populateData()
+    {
+        views.titleCategory.text=category?.title
+        pagingAdapter =NewsAdapter(requireContext()){_,item ->
+            viewModel.setNew(item)
+            (activity as MainActivity).navigateTo(R.id.action_listNewsFragment_to_detailNewsFragment)
+        }
         views.recyclerViewNews.apply {
             layoutManager = LinearLayoutManager(requireContext())
 
@@ -53,8 +66,17 @@ class ListNewsFragment :NimpeBaseFragment<FragmentListNewsBinding>() {
             footer = MedicalLoadStateAdapter { pagingAdapter.retry() }
         )
         lifecycleScope.launchWhenCreated  {
-           viewMode.getNews(1,category!!).collectLatest { pagingData ->
+            viewModel.getNews(viewModel.language,category!!).collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)
+            }
+        }
+    }
+
+    private fun handleEvent(it: HomeViewEvent) {
+        when(it)
+        {
+            is HomeViewEvent.ResetLanguege->{
+                populateData()
             }
         }
     }

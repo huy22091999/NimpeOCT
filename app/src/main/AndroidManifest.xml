@@ -8,7 +8,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Required for foreground services on P+. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- TODO: Step 1.0, Review Permissions: Specify permissions you are using. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:ignore="CoarseFineLocation" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:name=".NimpeApplication"
         android:allowBackup="false"
@@ -19,17 +26,19 @@
         android:theme="@style/Theme.Nimpe"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <service
+            android:name=".ui.home.request_location.ForegroundOnlyLocationService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location"></service>
         <activity
             android:name=".ui.security.AcceptActivity"
-            android:theme="@style/Theme.Nimpe.NoActionBar"
-            android:exported="false" />
-        <activity
-            android:name=".ui.medical.MedicalActivity"
-            android:exported="true"></activity>
+            android:exported="false"
+            android:theme="@style/Theme.Nimpe.NoActionBar" />
         <activity
             android:name=".ui.security.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.Nimpe.NoActionBar"></activity>
+            android:theme="@style/Theme.Nimpe.NoActionBar" />
         <activity
             android:name=".ui.security.SplashActivity"
             android:exported="true"
@@ -43,7 +52,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Nimpe.NoActionBar"></activity>
+            android:theme="@style/Theme.Nimpe.NoActionBar"/>
     </application>
 
 </manifest>

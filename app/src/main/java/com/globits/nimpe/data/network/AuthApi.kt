@@ -3,10 +3,13 @@ package com.globits.nimpe.data.network
 import com.globits.nimpe.data.model.TokenResponse
 import com.globits.nimpe.data.model.UserCredentials
 import io.reactivex.Observable
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
+    @POST("oauth/token")
+    fun loginWithRefreshToken(@Body credentials: UserCredentials):Call<TokenResponse>
     @POST("oauth/token")
     fun oauth(@Body credentials: UserCredentials): Observable<TokenResponse>
     companion object {

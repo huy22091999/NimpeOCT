@@ -10,8 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.mvrx.activityViewModel
+import com.globits.nimpe.R
 import com.globits.nimpe.core.NimpeBaseFragment
 import com.globits.nimpe.databinding.FragmentMedicalBinding
+import com.globits.nimpe.ui.home.HomeViewEvent
 import com.globits.nimpe.ui.home.HomeViewmodel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -36,6 +38,9 @@ class MedicalFragment : NimpeBaseFragment<FragmentMedicalBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         pagingAdapter = MedicalAdapter(requireContext())
+        homeViewmodel.observeViewEvents {
+            handleEvent(it)
+        }
         views.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
 
@@ -45,16 +50,23 @@ class MedicalFragment : NimpeBaseFragment<FragmentMedicalBinding>() {
             footer = MedicalLoadStateAdapter { pagingAdapter.retry() }
         )
         lifecycleScope.launchWhenCreated  {
-            homeViewmodel.getHealthOrgs(1).collectLatest { pagingData ->
+            homeViewmodel.getHealthOrgs(homeViewmodel.language).collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)
             }
         }
-//        lifecycleScope.launchWhenCreated {
-//            pagingAdapter.loadStateFlow.collectLatest { loadStates ->
-//                views.swipeRefresh.isRefreshing =
-//                    loadStates.mediator?.refresh is LoadState.Loading
-//            }
-//        }
+
+    }
+    private fun handleEvent(it: HomeViewEvent) {
+        when(it)
+        {
+            is HomeViewEvent.ResetLanguege->{
+                lifecycleScope.launchWhenCreated  {
+                    homeViewmodel.getHealthOrgs(homeViewmodel.language).collectLatest { pagingData ->
+                        pagingAdapter.submitData(pagingData)
+                    }
+                }
+            }
+        }
     }
 
 }

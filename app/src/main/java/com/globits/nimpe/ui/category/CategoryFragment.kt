@@ -10,10 +10,13 @@ import androidx.navigation.findNavController
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.activityViewModel
 import com.airbnb.mvrx.withState
+import com.globits.nimpe.R
 import com.globits.nimpe.core.NimpeBaseFragment
 import com.globits.nimpe.data.model.Category
 import com.globits.nimpe.databinding.FragmentNewsBinding
+import com.globits.nimpe.ui.MainActivity
 import com.globits.nimpe.ui.home.HomeViewAction
+import com.globits.nimpe.ui.home.HomeViewEvent
 import com.globits.nimpe.ui.home.HomeViewmodel
 
 class CategoryFragment :NimpeBaseFragment<FragmentNewsBinding>() {
@@ -32,16 +35,23 @@ class CategoryFragment :NimpeBaseFragment<FragmentNewsBinding>() {
         adapter= CategoryAdapter(requireContext(),list)
         views.gridLayout.adapter=adapter
         views.gridLayout.setOnItemClickListener { _, _, position, _ ->
-            val direction= list[position].id?.let {
-                CategoryFragmentDirections.actionNavNewsFragmentToListNewsFragment(
-                    it
-                )
-            }
             viewModel.setCategory(list[position])
-            if (direction != null) {
-                view.findNavController().navigate(direction)
+            (activity as MainActivity).navigateTo(R.id.action_nav_newsFragment_to_listNewsFragment)
+        }
+        viewModel.observeViewEvents {
+            handleEvent(it)
+        }
+    }
+    fun handleEvent(event: HomeViewEvent)
+    {
+        when(event)
+        {
+            is HomeViewEvent.ResetLanguege->{
+                views.title.text=getString(R.string.category_theme)
+                viewModel.handle(HomeViewAction.GetCategorys)
             }
         }
+
     }
 
     override fun invalidate() = withState(viewModel){

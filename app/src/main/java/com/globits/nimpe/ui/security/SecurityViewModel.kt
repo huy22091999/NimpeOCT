@@ -44,7 +44,6 @@ class SecurityViewModel @AssistedInject constructor(
         }
         repository.login(userName,password).execute {
             copy(asyncLogin=it)
-
         }
     }
     private fun handleSaveToken(tokenResponse: TokenResponse)

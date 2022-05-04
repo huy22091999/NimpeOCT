@@ -20,7 +20,7 @@ class HealthOrgPagingSource(
         return try {
 
             val nextPageNumber = params.key ?: INITIAL_PAGE
-            val filter = HealthOrganizationFilter(language,null,-1,nextPageNumber, 10,)
+            val filter = HealthOrganizationFilter(language,nextPageNumber, 10,)
             val response = api.getHealthOrganization(filter)
 
             LoadResult.Page(

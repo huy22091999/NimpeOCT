@@ -12,4 +12,10 @@
         <item name="cornerRadius">24dp</item>
 
     </style>
+    <style name="stylePopup" parent="Base.Widget.AppCompat.PopupMenu">
+        <item name="android:dropDownVerticalOffset">0dip</item>
+        <item name="android:dropDownHorizontalOffset">20dp</item>
+        <item name="android:dropDownWidth">100dp</item>
+        <item name="android:width">100dp</item>
+    </style>
 </resources>

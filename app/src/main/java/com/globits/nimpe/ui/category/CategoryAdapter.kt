@@ -6,10 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.globits.nimpe.R
 import com.globits.nimpe.data.model.Category
+import com.globits.nimpe.data.network.SessionManager
+import com.globits.nimpe.ui.MainActivity
 
-class CategoryAdapter(val context: Context,val list: List<Category>) :BaseAdapter(){
+class CategoryAdapter(val context: Context, val list: List<Category>) : BaseAdapter() {
     override fun getCount(): Int {
         return list.size
     }
@@ -23,8 +29,21 @@ class CategoryAdapter(val context: Context,val list: List<Category>) :BaseAdapte
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view=LayoutInflater.from(context).inflate(R.layout.category_list_item,parent,false)
-        view.findViewById<TextView>(R.id.lable_category).text=list[position].title
+        val view = LayoutInflater.from(context).inflate(R.layout.category_list_item, parent, false)
+        view.findViewById<TextView>(R.id.lable_category).text = list[position].title
+        val image = view.findViewById<AppCompatImageView>(R.id.image_category)
+//        val token = SessionManager(context).fetchAuthToken()
+        var glideUrl = GlideUrl(
+            MainActivity.linkImage.plus(list[position].titleImageUrl),
+            LazyHeaders.Builder()
+//                .addHeader("Authorization", "Bearer $token")
+                .build()
+        )
+        Glide
+            .with(context)
+            .load(glideUrl)
+            .optionalFitCenter()
+            .into(image)
         return view
     }
 

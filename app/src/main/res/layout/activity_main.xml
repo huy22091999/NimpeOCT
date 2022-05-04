@@ -10,11 +10,20 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:elevation="0dp"
+        android:background="?attr/colorOnPrimarySurface"
+        app:statusBarScrim="@android:color/transparent"
         android:theme="@style/Theme.Nimpe.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:id="@+id/toolbar"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_width="match_parent"
+
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorOnPrimarySurface"
             app:popupTheme="@style/Theme.Nimpe.PopupOverlay" />

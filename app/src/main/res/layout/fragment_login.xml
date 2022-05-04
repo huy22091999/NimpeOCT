@@ -4,28 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/nimpe_background_login"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".ui.security.LoginFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Space
+            android:layout_height="match_parent"
+            >
+            <LinearLayout
                 android:id="@+id/space"
                 android:layout_width="match_parent"
-                android:layout_height="160dp" />
+                android:layout_height="180dp"
+                android:background="@color/nimpe_background_login"
+                android:orientation="horizontal" />
 
             <LinearLayout
-                android:layout_below="@id/space"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="-20sp"
+                android:layout_below="@id/space"
                 android:background="@drawable/background_login"
                 android:orientation="vertical"
                 android:padding="24dp">
@@ -41,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
+                    android:gravity="center"
                     android:text="@string/warning"
                     android:textColor="@color/gray"
                     android:textSize="28sp"
@@ -50,11 +54,14 @@
                     style="@style/NimpeInputLayoutLogin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/username_til"
                     android:layout_marginTop="24dp"
+                    app:hintEnabled="false"
                     app:startIconDrawable="@drawable/ic_person">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/username"
+                        android:hint="@string/account"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -65,10 +72,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:errorEnabled="true"
-                    app:startIconDrawable="@drawable/ic_lock">
+                    app:hintEnabled="false"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    android:id="@+id/password_til">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/password"
+                        android:hint="@string/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -80,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
-                    android:padding="14dp"
+                    android:padding="12dp"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp"
                     android:text="@string/loggin" />
@@ -101,6 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="32dp"
                     android:text="@string/forget_password"
                     android:textColor="@color/blue"
                     android:textSize="16sp"

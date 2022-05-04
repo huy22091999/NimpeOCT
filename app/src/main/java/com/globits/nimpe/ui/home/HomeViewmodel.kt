@@ -5,12 +5,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.airbnb.mvrx.*
 import com.globits.nimpe.core.NimpeViewModel
-import com.globits.nimpe.data.model.Category
-import com.globits.nimpe.data.model.HealthOrganization
-import com.globits.nimpe.data.model.News
-import com.globits.nimpe.data.model.User
+import com.globits.nimpe.data.model.*
 import com.globits.nimpe.data.repository.CategoryRepository
 import com.globits.nimpe.data.repository.HealthOrganizationRepository
+import com.globits.nimpe.data.repository.ReDengueRepository
 import com.globits.nimpe.data.repository.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,38 +19,68 @@ class HomeViewmodel @AssistedInject constructor(
     @Assisted state: HomeViewState,
     val repository: UserRepository,
     val categoryRepository: CategoryRepository,
-    val healthOrganizationRepository: HealthOrganizationRepository
-) : NimpeViewModel<HomeViewState,HomeViewAction,HomeViewEvent>(state) {
-    private var category:Category=Category()
+    val healthOrganizationRepository: HealthOrganizationRepository,
+    val dengueRepository: ReDengueRepository
+) : NimpeViewModel<HomeViewState, HomeViewAction, HomeViewEvent>(state) {
+    private var category: Category = Category()
+    private var new = News()
+    var language: Int = 1
     override fun handle(action: HomeViewAction) {
-        when(action)
-        {
-            is HomeViewAction.GetCategorys->handleGetCategory()
+        when (action) {
+            is HomeViewAction.GetCategorys -> handleGetCategory()
+            is HomeViewAction.GetCurrentUser -> handleCurrentUser()
+            is HomeViewAction.SaveFeedback -> handSaveFeedback(action.feedback)
+            is HomeViewAction.ResetLang -> handResetLang()
         }
     }
-    fun setCategory(category: Category)
-    {
-        this.category=category
-    }
-    fun getCategory()=this.category
 
+    private fun handResetLang() {
+        _viewEvents.post(HomeViewEvent.ResetLanguege)
+    }
+
+    private fun handSaveFeedback(feedback: Feedback) {
+        setState {
+            copy(asyncSaveFeedback = Loading())
+        }
+        dengueRepository.saveFeedback(feedback).execute {
+            _viewEvents.post(HomeViewEvent.SaveFeedback)
+            copy(asyncSaveFeedback = it)
+        }
+    }
+
+    fun setCategory(category: Category) {
+        this.category = category
+    }
+    fun getCategory() = this.category
+    fun setNew(new: News) {
+        this.new = new
+    }
+    fun getNew() = this.new
 
     private fun handleGetCategory() {
         setState {
-            copy(asyncCategory=Loading())
+            copy(asyncCategory = Loading())
         }
-        categoryRepository.getCategory().execute {
-            copy(asyncCategory=it)
+        categoryRepository.getCategory(language).execute {
+            copy(asyncCategory = it)
         }
     }
 
-    fun getString()="test"
-    fun getHealthOrgs( language:Int): Flow<PagingData<HealthOrganization>> {
-        val newPageData = healthOrganizationRepository.getHealthOrg(language).cachedIn(viewModelScope)
+    private fun handleCurrentUser() {
+        setState { copy(userCurrent = Loading()) }
+        repository.getCurrentUser().execute {
+            copy(userCurrent = it)
+        }
+    }
+
+    fun getHealthOrgs(language: Int): Flow<PagingData<HealthOrganization>> {
+        val newPageData =
+            healthOrganizationRepository.getHealthOrg(language).cachedIn(viewModelScope)
         return newPageData
     }
-    fun getNews( language:Int,category: Category): Flow<PagingData<News>> {
-        val newPageData = categoryRepository.getNews(language,category).cachedIn(viewModelScope)
+
+    fun getNews(language: Int, category: Category): Flow<PagingData<News>> {
+        val newPageData = categoryRepository.getNews(language, category).cachedIn(viewModelScope)
         return newPageData
     }
 
@@ -63,12 +91,16 @@ class HomeViewmodel @AssistedInject constructor(
 
     companion object : MvRxViewModelFactory<HomeViewmodel, HomeViewState> {
         @JvmStatic
-        override fun create(viewModelContext: ViewModelContext, state: HomeViewState): HomeViewmodel {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: HomeViewState
+        ): HomeViewmodel {
             val factory = when (viewModelContext) {
                 is FragmentViewModelContext -> viewModelContext.fragment as? Factory
                 is ActivityViewModelContext -> viewModelContext.activity as? Factory
             }
-            return factory?.create(state) ?: error("You should let your activity/fragment implements Factory interface")
+            return factory?.create(state)
+                ?: error("You should let your activity/fragment implements Factory interface")
         }
     }
 

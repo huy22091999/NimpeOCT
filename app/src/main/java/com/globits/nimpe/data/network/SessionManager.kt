@@ -15,21 +15,28 @@ class SessionManager(context: Context) {
 
     companion object {
         const val USER_TOKEN = "user_token"
+        const val TOKEN_REFRESH="refresh_token"
     }
 
     /**
-     * Function to save auth token
+     * Function to save auth token refresh
      */
+    fun saveAuthTokenRefresh(token: String) {
+        val editor = prefs.edit()
+        editor.putString(TOKEN_REFRESH, token)
+        editor.apply()
+    }
+    fun fetchAuthTokenRefresh(): String? {
+        return prefs.getString(TOKEN_REFRESH, null)
+    }
+    fun fetchAuthToken(): String? {
+        return prefs.getString(USER_TOKEN, null)
+    }
     fun saveAuthToken(token: String) {
         val editor = prefs.edit()
         editor.putString(USER_TOKEN, token)
         editor.apply()
     }
 
-    /**
-     * Function to fetch auth token
-     */
-    fun fetchAuthToken(): String? {
-        return prefs.getString(USER_TOKEN, null)
-    }
+
 }

@@ -1,30 +1,58 @@
 package com.globits.nimpe.ui.category
 
 import android.content.Context
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.globits.nimpe.data.model.News
+import com.globits.nimpe.data.network.SessionManager
 import com.globits.nimpe.databinding.ItemNewLayoutBinding
+import com.globits.nimpe.ui.MainActivity
 import java.text.SimpleDateFormat
 
 class NewsAdapter(
-    val context: Context
+    val context: Context,
+    private val onListItemClicked: (Int, News) -> Unit
 ) :
     PagingDataAdapter<News, NewsAdapter.NewsViewHolder>(COMPARATOR) {
 
-    class NewsViewHolder(val context: Context,val binding: ViewBinding) :
+    class NewsViewHolder(
+        val context: Context,
+        val binding: ViewBinding,
+        private val onViewClicked: (Int, News) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bindHeath(news: News) {
-            with(binding as ItemNewLayoutBinding){
-               title.text=news.title
-                val sdf = SimpleDateFormat("hh:mm dd/M/yyyy")
-                val currentDate = sdf.format(news.publishDate)
-                time.text= currentDate
+            with(binding as ItemNewLayoutBinding) {
+//                val token = SessionManager(context).fetchAuthToken()
+                var glideUrl = GlideUrl(
+                    MainActivity.linkImage.plus(news.titleImageUrl),
+                    LazyHeaders.Builder()
+//                        .addHeader("Authorization", "Bearer $token")
+                        .build()
+                )
+                Glide
+                    .with(context)
+                    .load(glideUrl)
+                    .optionalFitCenter()
+                    .into(image)
+
+                title.text = news.title
+                val sdf = SimpleDateFormat("hh:mm dd/MM/yyyy")
+                val currentDate =
+                    if (news.publishDate != null) sdf.format(news.publishDate) else "-"
+                time.text = currentDate
+                itemView.setOnClickListener {
+                    onViewClicked(absoluteAdapterPosition,news)
+                }
             }
         }
     }
@@ -39,9 +67,11 @@ class NewsAdapter(
         parent: ViewGroup,
         viewType: Int
     ): NewsViewHolder {
-        val itemBinding:ViewBinding=ItemNewLayoutBinding.inflate(LayoutInflater.from(context),parent,false)
-        return NewsViewHolder(context,itemBinding)
+        val itemBinding: ViewBinding =
+            ItemNewLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
+        return NewsViewHolder(context, itemBinding,onListItemClicked)
     }
+
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<News>() {
             override fun areItemsTheSame(oldItem: News, newItem: News): Boolean =

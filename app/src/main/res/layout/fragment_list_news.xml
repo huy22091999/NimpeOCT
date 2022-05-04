@@ -29,6 +29,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="16dp"
         android:id="@+id/recycler_view_news"
         tools:listitem="@layout/item_new_layout"
         android:layout_width="match_parent"

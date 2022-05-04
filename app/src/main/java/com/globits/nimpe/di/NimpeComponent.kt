@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.fragment.app.FragmentFactory
 import com.globits.nimpe.NimpeApplication
 import com.globits.nimpe.ui.MainActivity
-import com.globits.nimpe.ui.medical.MedicalActivity
 import com.globits.nimpe.ui.security.LoginActivity
 import com.globits.nimpe.ui.security.SplashActivity
 import dagger.BindsInstance
@@ -22,7 +21,6 @@ interface NimpeComponent {
     fun inject(mainactivity: MainActivity)
     fun inject(loginactivity: LoginActivity)
     fun inject(splashactivity: SplashActivity)
-    fun inject(medicalactivity: MedicalActivity)
     fun fragmentFactory(): FragmentFactory
 
     @Component.Factory

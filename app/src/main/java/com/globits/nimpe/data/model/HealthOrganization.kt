@@ -30,10 +30,6 @@ data class HealthOrganizationFilter(
 
     @SerializedName("checkLanguage")
     val checkLanguage: Int? = null,
-    @SerializedName("name")
-    val name: String? = null,
-    @SerializedName("orgType")
-    val orgType: Int? = null,
     @SerializedName("pageIndex")
     val pageIndex: Int? = null,
     @SerializedName("pageSize")

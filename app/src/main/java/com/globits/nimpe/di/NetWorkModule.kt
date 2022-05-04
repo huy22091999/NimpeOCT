@@ -1,20 +1,17 @@
 package com.globits.nimpe.di
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import com.globits.nimpe.data.network.*
-import com.globits.nimpe.data.repository.AuthRepository
-import com.globits.nimpe.data.repository.CategoryRepository
-import com.globits.nimpe.data.repository.HealthOrganizationRepository
-import com.globits.nimpe.data.repository.UserRepository
+import com.globits.nimpe.data.repository.*
 import com.globits.nimpe.ui.security.UserPreferences
-import dagger.Binds
+import com.globits.nimpe.utils.LocalHelper
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 object NetWorkModule {
+    @Provides
+    fun providerLocaleHelper():LocalHelper=LocalHelper()
 
     @Provides
     fun providerRemoteDateSource(): RemoteDataSource = RemoteDataSource()
@@ -67,6 +64,15 @@ object NetWorkModule {
         context: Context
     ) = remoteDataSource.buildApi(HealthOrganizationApi::class.java, context)
 
+    @Provides
+    fun providerReDengueRepository(
+        api: ReDengueLocationApi
+    ) : ReDengueRepository =ReDengueRepository(api)
+    @Provides
+    fun providerReDengueApi(
+        remoteDataSource: RemoteDataSource,
+        context: Context
+    ) = remoteDataSource.buildApi(ReDengueLocationApi::class.java, context)
 
 
 }
