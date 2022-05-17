@@ -20,13 +20,21 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:id="@+id/toolbar"
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:elevation="0dp"
             android:layout_width="match_parent"
-
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorOnPrimarySurface"
-            app:popupTheme="@style/Theme.Nimpe.PopupOverlay" />
+            app:popupTheme="@style/Theme.Nimpe.PopupOverlay" >
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:id="@+id/title"
+                android:textSize="18sp"
+                android:layout_marginEnd="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/gray"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -2,10 +2,7 @@ package com.globits.nimpe.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActivityManager
-import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -47,6 +44,7 @@ import com.globits.nimpe.utils.LocalHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber.d
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -74,7 +72,6 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
     private lateinit var toolbar: Toolbar
     lateinit var navView: NavigationView
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         (applicationContext as NimpeApplication).nimpeComponent.inject(this)
         super.onCreate(savedInstanceState)
@@ -96,14 +93,13 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
         requestForegroundPermissions()
     }
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         val name = getString(R.string.app_name)
         val descriptionText = getString(R.string.channel_description)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_HIGH
 
         val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
             description = descriptionText
@@ -124,16 +120,13 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
 
     private fun setupToolbar() {
         toolbar = views.toolbar
+        toolbar.title=""
+        views.title.text=getString(R.string.app_name)
         setSupportActionBar(toolbar)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     @SuppressLint("ResourceType")
-    @RequiresApi(Build.VERSION_CODES.N)
     private fun setupDrawer() {
         drawerLayout = views.appBarMain.drawerLayout
         navView = views.appBarMain.navView
@@ -159,7 +152,7 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
             val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
 
             when (menuItem.itemId) {
-                R.id.exit->{
+                R.id.exit -> {
                     val homeIntent = Intent(Intent.ACTION_MAIN)
                     homeIntent.addCategory(Intent.CATEGORY_HOME)
                     homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -259,6 +252,10 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
                 } else {
                     drawerLayout.openDrawer(GravityCompat.START)
                 }
+                return true
+            }
+            R.id.menu_list_health -> {
+                navController.navigate(R.id.nav_medicalFragment)
                 return true
             }
             else -> {
@@ -408,5 +405,6 @@ class MainActivity : NimpeBaseActivity<ActivityMainBinding>(), HomeViewmodel.Fac
     fun startService() {
         startService(Intent(this, ForegroundOnlyLocationService::class.java))
     }
+
 }
 

@@ -11,13 +11,15 @@
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/backgound_box.xml" value="0.1" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/background_category.xml" value="0.157" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/background_category_layout.xml" value="0.156" />
+        <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/background_item_health.xml" value="0.208" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/background_login.xml" value="0.192" />
+        <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/ic_launcher.xml" value="0.1" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/ic_launcher_background.xml" value="0.129" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.156" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_accept.xml" value="0.33" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_feedback.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_login.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_main.xml" value="0.4531791907514451" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_main2.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_medical.xml" value="0.1546875" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/layout/activity_splash.xml" value="0.22" />
@@ -44,6 +46,7 @@
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/menu/menu_main.xml" value="0.5" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1715" />
         <entry key="..\:/Users/huycn/AndroidStudioProjects/nimpe/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.156" />
+        <entry key="..\:/Users/huycn/AppData/Local/Android/Sdk/platforms/android-31/data/res/drawable/ic_lock_idle_alarm.xml" value="0.1345" />
         <entry key="..\:/Users/huycn/AppData/Local/Android/Sdk/platforms/android-31/data/res/drawable/ic_lock_lock.xml" value="0.1" />
       </map>
     </option>

@@ -19,7 +19,7 @@
     <application
         android:name=".NimpeApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_lancher"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"

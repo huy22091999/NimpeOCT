@@ -24,11 +24,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.location.Location
-import android.os.Handler
-import android.os.HandlerThread
+import android.os.*
 
-import android.os.IBinder
-import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -139,19 +136,16 @@ class ForegroundOnlyLocationService : Service() {
 //                                listDengue
 //                            )
 //                        )
-                        val isHasDengue=checkDengue(currentLocation!!,listPatient,listDengue)
-                        if (isFirst)
-                        {
-                            isFirst=false
+                        val isHasDengue = checkDengue(currentLocation!!, listPatient, listDengue)
+                        if (isFirst) {
+                            isFirst = false
                             generateNotificationDengue(isHasDengue)
-                        }else
-                        {
-                            if(isHasDengue!=isLastCheckHasDengue)
-                            {
+                        } else {
+                            if (isHasDengue != isLastCheckHasDengue) {
                                 generateNotificationDengue(isHasDengue)
                             }
                         }
-                        isLastCheckHasDengue=isHasDengue
+                        isLastCheckHasDengue = isHasDengue
 
                     }
 
@@ -165,12 +159,11 @@ class ForegroundOnlyLocationService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         mHandler.post {
-            val notification = generateNotification()
+            var notification: Notification = generateNotification()
             startForeground(NOTIFICATION_ID_FOREGROUND, notification)
             subscribeToLocationUpdates()
         }
 
-        // Tells the system not to recreate the service after it's been killed.
         return START_STICKY
     }
 
@@ -263,21 +256,35 @@ class ForegroundOnlyLocationService : Service() {
         val activityPendingIntent = PendingIntent.getActivity(
             this, 0, launchActivityIntent, 0
         )
-        // 4. Build and issue the notification.
-        // Notification Channel Id is ignored for Android pre O (26).
-        val notificationCompatBuilder =
-            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationCompatBuilder =
+                NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+            return notificationCompatBuilder
+                .setStyle(bigTextStyle)
+                .setContentTitle(titleText)
+                .setContentText(mainNotificationText)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(activityPendingIntent)
+                .build()
+        } else {
+            val bigTextStyle = Notification.BigTextStyle()
+                .bigText(mainNotificationText)
+                .setBigContentTitle(titleText)
+            return Notification.Builder(this)
+                .setStyle(bigTextStyle)
+                .setContentTitle(titleText)
+                .setContentText(mainNotificationText)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setDefaults(Notification.DEFAULT_ALL)
+                //.setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentIntent(activityPendingIntent)
+                .build()
+        }
 
-        return notificationCompatBuilder
-            .setStyle(bigTextStyle)
-            .setContentTitle(titleText)
-            .setContentText(mainNotificationText)
-            .setSmallIcon(R.drawable.ic_lancher)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
-//            .setOngoing(false)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentIntent(activityPendingIntent)
-            .build()
+
     }
 
     fun generateNotificationDengue(isDengue: Boolean) {
@@ -289,21 +296,39 @@ class ForegroundOnlyLocationService : Service() {
         }
         val sdf = SimpleDateFormat("hh:mm:ss")
         val currentDate = sdf.format(Date())
-        var notification = NotificationCompat.Builder(
-            applicationContext,
-            NOTIFICATION_CHANNEL_ID
-        )
-            .setContentTitle("Dengue Alert - ${getString(R.string.at)} $currentDate")
-            .setContentText(if (isDengue) getString(R.string.has_dengue) else getString(R.string.no_dengue))
-            .setSmallIcon(R.drawable.ic_lancher)
-            .setContentIntent(pendingIntent)
-            .setPriority(Notification.VISIBILITY_PUBLIC)
-            .setDefaults(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(Notification.CATEGORY_CALL)
-            .setTicker("ticker")
-        with(NotificationManagerCompat.from(applicationContext)) {
-            notify(NOTIFICATION_ID, notification.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            var notification = NotificationCompat.Builder(
+                applicationContext,
+                NOTIFICATION_CHANNEL_ID
+            )
+                .setContentTitle("Dengue Alert - ${getString(R.string.at)} $currentDate")
+                .setContentText(if (isDengue) getString(R.string.has_dengue) else getString(R.string.no_dengue))
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.VISIBILITY_PUBLIC)
+                .setDefaults(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+            with(NotificationManagerCompat.from(applicationContext)) {
+                notify(NOTIFICATION_ID, notification.build())
+            }
+        }else{
+            val notificationPopup = Notification.Builder(this)
+                .setContentTitle("Dengue Alert - ${getString(R.string.at)} $currentDate")
+                .setContentText(if (isDengue) getString(R.string.has_dengue) else getString(R.string.no_dengue))
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setCategory(Notification.CATEGORY_CALL)
+                .build()
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(0, notificationPopup)
         }
+        if(isDengue){
+            postCountNotification()
+        }
+
     }
 
     private val key = "1234567890123456"
@@ -322,7 +347,24 @@ class ForegroundOnlyLocationService : Service() {
     }
 
     companion object {
-        private const val NOTIFICATION_ID = 12345678
+        const val NOTIFICATION_ID = 12345678
         private const val NOTIFICATION_ID_FOREGROUND = 1234567
+    }
+    fun postCountNotification()
+    {
+        val api =RemoteDataSource().buildApi().postCountNotification()
+        api.enqueue(object :Callback<okhttp3.Response>{
+            override fun onResponse(
+                call: Call<okhttp3.Response>,
+                response: Response<okhttp3.Response>
+            ) {
+                print(response.body())
+            }
+
+            override fun onFailure(call: Call<okhttp3.Response>, t: Throwable) {
+                t.printStackTrace()
+            }
+
+        })
     }
 }

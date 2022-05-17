@@ -3,6 +3,7 @@ package com.globits.nimpe.data.network
 import android.location.Location
 import com.globits.nimpe.data.model.*
 import io.reactivex.Observable
+import okhttp3.Response
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -16,7 +17,8 @@ import javax.inject.Singleton
 interface ReDengueLocationApi {
     @GET("public/app/getDegueLocation")
     fun getAllLocation():Call<ResponseBody>
-
+    @POST("public/app/CountNotification")
+    fun postCountNotification():Call<Response>
     @POST("api/dengue-location/searchByDto")
     fun getDengueLocation(@Body filter: DengueLocationFilter): Call<Page<DengueLocation>>
     @GET("api/patientInformation/listPatient")
